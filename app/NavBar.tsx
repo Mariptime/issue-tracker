@@ -17,16 +17,16 @@ const NavBar = () => {
         <nav className='flex bg-blue-200 space-x-6 border-y h-14 px-5 items-center mb-5'>
             <Link href="/"><FaBug /></Link>
             <ul className='flex space-x-6'>
-                {links.map(link =>
-                    <Link
-                        key='href'
-                        className={classNames({
-                            'text-blue-900': currentPath === link.href,
-                            'text-zinc-500': currentPath !== link.href,
-                            'hover:text-zinc-700 transition-colors': true
-                        })}
-                        href={link.href}>{link.label}</Link>)}
-
+                {links.map((link) => (
+                    <ul key={`${link}`}>
+                        <Link href={link.href}
+                            className={classNames('text-blue-900 hover:text-zinc-900', {
+                                'font-bold': currentPath === link.href,
+                                'text-zinc-500': currentPath !== link.href,
+                            })}>{link.label}
+                        </Link>
+                    </ul>
+                ))}
             </ul>
         </nav>
     )
