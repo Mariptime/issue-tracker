@@ -1,5 +1,5 @@
 'use client';
-import { Button, Callout, Text, TextField } from '@radix-ui/themes';
+import { Button, Callout, Spinner, Text, TextField } from '@radix-ui/themes';
 import dynamic from 'next/dynamic';
 import { useForm, Controller } from 'react-hook-form';
 import axios from 'axios';
@@ -9,53 +9,62 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createIssueSchema } from '@/app/schemaValidation';
-
 import { z } from 'zod'
+import ErrorMessage from '@/app/components/ErrorMessage';
 
 type IssueForm = z.infer<typeof createIssueSchema>
-//quick fix for navigator error
+
 const SimpleMDE = dynamic(
     () => import('react-simplemde-editor'),
-    { ssr: false } // This will load the component only on client side
+    { ssr: false }
 );
 
-const newIssuePage = () => {
+const NewIssuePage = () => {
     const router = useRouter();
     const { register, control, handleSubmit, formState: { errors } } = useForm<IssueForm>({
         resolver: zodResolver(createIssueSchema)
     });
-    console.log(errors);
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const onSubmit = async (data: IssueForm) => {
+        try {
+            setLoading(true);
+            await axios.post('/api/issues', data);
+            router.push('/issues');
+        } catch (error) {
+            setLoading(false);
+            setError('Unknown Error Occurred');
+        }
+    };
 
     return (
         <div className='max-w-xl items-center'>
-            {error && (<Callout.Root color='red' className='mb-5'>
-                <Callout.Icon>
-                    <FaInfoCircle />
-                </Callout.Icon>
-                <Callout.Text> {error} </Callout.Text>
-            </Callout.Root>)}
+            {error && (
+                <Callout.Root color='red' className='mb-5'>
+                    <Callout.Icon>
+                        <FaInfoCircle />
+                    </Callout.Icon>
+                    <Callout.Text>{error}</Callout.Text>
+                </Callout.Root>
+            )}
 
-            <form className='space-y-2' onSubmit={handleSubmit(async (data) => {
-                try {
-                    await axios.post('/api/issues', data);
-                    router.push('/issues');
-                } catch (error) {
-                    setError('Unknown Error Occured');
-                }
-            })}>
+            <form className='space-y-2' onSubmit={handleSubmit(onSubmit)}>
                 <TextField.Root placeholder='Title' {...register('title')} />
-                {errors.title && <Text color='red' as='p'>{errors.title.message}</Text>}
+                <ErrorMessage>{errors.title?.message}</ErrorMessage>
                 <Controller
                     name='description'
                     control={control}
                     render={({ field }) => <SimpleMDE placeholder='Description' {...field} />}
                 />
-                {errors.description && <Text color='red' as='p'>{errors.description.message}</Text>}
-                <Button>Submit New Issue</Button>
+                <ErrorMessage>{errors.description?.message}</ErrorMessage>
+                <Button>Submit New Issue{loading && <Spinner />}
+
+                </Button>
+
             </form>
         </div>
     )
 }
 
-export default newIssuePage;
+export default NewIssuePage;
