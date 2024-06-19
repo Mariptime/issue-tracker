@@ -3,7 +3,7 @@ import { Link as RadixLink } from "@radix-ui/themes"
 
 interface Props {
     href: string
-    children: String
+    children: string
 }
 
 const Link = ({ href, children }: Props) => {
