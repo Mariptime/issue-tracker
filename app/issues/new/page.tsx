@@ -44,7 +44,7 @@ const NewIssuePage = () => {
     };
 
     return (
-        
+
         <div className='max-w-xl items-center'>
             {error && (
                 <Callout.Root color='red' className='mb-5'>
