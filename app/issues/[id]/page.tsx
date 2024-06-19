@@ -1,8 +1,8 @@
 import StatusBadges from '@/app/components/StatusBadges';
-import prisma from '@/prisma/client'
-import { Text, Flex, Heading, Card } from '@radix-ui/themes';
+import prisma from '@/prisma/client';
+import { Card, Flex, Heading, Text } from '@radix-ui/themes';
+import delay from 'delay';
 import { notFound } from 'next/navigation';
-import React from 'react'
 import ReactMarkdown from 'react-markdown';
 
 interface Props {
