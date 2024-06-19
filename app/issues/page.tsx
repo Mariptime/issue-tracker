@@ -4,7 +4,7 @@ import Link from 'next/link'
 import prisma from '@/prisma/client'
 import StatusBadges from '../components/StatusBadges'
 import delay from 'delay';
-import IssueActions from './issueActions'
+import IssueActions from './IssueActions'
 
 const IssuesPage = async () => {
 
@@ -18,7 +18,6 @@ const IssuesPage = async () => {
         <Table.Header>
           <Table.Row>
             <Table.ColumnHeaderCell>Title</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Description</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className='hidden md:table-cell'>Status</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className='hidden md:table-cell'>Timestamps</Table.ColumnHeaderCell>
           </Table.Row>
@@ -26,12 +25,11 @@ const IssuesPage = async () => {
         <Table.Body>
           {issues.map(issue => (
             <Table.Row key={issue.id}>
-              <Table.Cell>{issue.title}
+              <Table.Cell> <Link href={`issues/${issue.id}`}> {issue.title}</Link>
                 <div className='block md:hidden'>
                   <StatusBadges status={issue.status} />
                 </div>
               </Table.Cell>
-              <Table.Cell>{issue.description}</Table.Cell>
               <Table.Cell className='hidden md:table-cell' >
                 <StatusBadges status={issue.status} />
               </Table.Cell>
